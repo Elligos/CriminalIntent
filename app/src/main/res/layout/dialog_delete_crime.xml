@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/dialog_delete_crime"
+              android:weightSum="1">
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3"
+        android:textSize="18sp"
+        android:textAlignment="center"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="218dp"
+        android:layout_height="59dp"
+        android:gravity="center_vertical|center"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:layout_weight="0.02">
+
+        <Button
+            android:text="@android:string/yes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/confirm_delete_crime"
+            android:layout_margin="10dp"
+            android:layout_weight="0.76"/>
+
+        <Button
+            android:text="@android:string/no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cancel_delete_crime"
+            android:layout_margin="10dp"
+            android:layout_weight="0.90"/>
+    </LinearLayout>
+</LinearLayout>

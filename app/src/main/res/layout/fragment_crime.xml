@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:weightSum="1">
+
+    <include layout="@layout/view_camera_and_title"/>
+
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+        <!--android:text="@string/crime_title_label"-->
+        <!--android:id="@+id/titleTextView"-->
+        <!--android:layout_marginLeft="5dp"-->
+        <!--style="?android:listSeparatorTextViewStyle"/>-->
+
+    <!--<EditText-->
+        <!--android:layout_width="348dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/crime_title"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:hint="@string/crime_title_hint"/>-->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/crime_details_label"
+        android:id="@+id/textView2"
+        android:layout_marginLeft="5dp"
+        style="?android:listSeparatorTextViewStyle"/>
+
+    <!--android:layout_weight="0.63"-->
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/crime_solved_label"
+        android:id="@+id/crime_solved"
+        android:layout_marginLeft="24dp"
+        android:checked="false"/>
+
+    <Button
+        android:layout_width="327dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/crime_date"
+        android:layout_gravity="center_horizontal"
+        android:text="Set date"/>
+
+    <Button
+        android:text="@string/crime_suspect_text"
+        android:layout_width="327dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/crime_suspect_button"/>
+
+    <Button
+        android:text="@string/crime_call_suspect_text"
+        android:layout_width="327dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/crime_call_suspect_button"/>
+
+    <Button
+        android:text="@string/crime_report_text"
+        android:layout_width="327dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/crime_report_button"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="77dp"
+        android:layout_weight="0.26">
+
+        <ImageView
+            android:layout_width="78dp"
+            android:layout_height="63dp"
+            app:srcCompat="@drawable/ic_action_delete_crime"
+            android:id="@+id/imageDeleteCrime"
+            android:layout_gravity="bottom|center_horizontal"
+            android:clickable="true"
+            />
+    </FrameLayout>
+
+</LinearLayout>

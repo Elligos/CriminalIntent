@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:weightSum="1">
+
+    <include layout="@layout/view_camera_and_title"/>
+
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="0.07">-->
+
+        <!--<TextView-->
+            <!--android:layout_width="96dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+            <!--android:text="@string/crime_title_label"-->
+            <!--android:id="@+id/titleTextView"-->
+            <!--android:layout_marginLeft="5dp"-->
+            <!--style="?android:listSeparatorTextViewStyle"-->
+            <!--android:layout_gravity="right"/>-->
+
+        <!--<EditText-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/crime_title"-->
+            <!--android:hint="@string/crime_title_hint"/>-->
+    <!--</LinearLayout>-->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_weight="0.17">
+
+        <TextView
+            android:layout_width="96dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/crime_details_label"
+            android:id="@+id/textView2"
+            android:layout_marginLeft="5dp"
+            style="?android:listSeparatorTextViewStyle"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="44dp">
+
+        <Button
+            android:layout_width="327dp"
+            android:layout_height="wrap_content"
+            android:text="Set date"
+            android:id="@+id/crime_date"
+            android:layout_gravity="center_horizontal"/>
+
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/crime_solved_label"
+            android:id="@+id/crime_solved"
+            android:layout_marginLeft="100dp"
+            android:checked="false"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="44dp">
+
+        <Button
+            android:text="@string/crime_suspect_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/crime_suspect_button"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/crime_call_suspect_button"
+            android:layout_weight="1"
+            android:text="@string/crime_call_suspect_text"/>
+
+        <Button
+            android:text="@string/crime_report_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/crime_report_button"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        >
+
+        <ImageView
+            android:layout_width="49dp"
+            android:layout_height="45dp"
+            app:srcCompat="@drawable/ic_action_delete_crime"
+            android:layout_gravity="top|center_horizontal"
+            android:id="@+id/imageDeleteCrime"/>
+
+    </FrameLayout>
+
+</LinearLayout>
