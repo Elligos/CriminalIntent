@@ -20,6 +20,7 @@ import com.example.dima.criminalintent.R;
  * Created by Dima on 25.09.2016.
  */
 
+//диалог подтверждения удаления преступления
 public class DeleteCrimeFragment extends DialogFragment implements View.OnClickListener {
 
     Button mOkButton;
@@ -29,13 +30,6 @@ public class DeleteCrimeFragment extends DialogFragment implements View.OnClickL
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.dialog_delete_crime, null);
-        mOkButton = (Button) view.findViewById(R.id.confirm_delete_crime);
-        mOkButton.setOnClickListener(this);
-
-        mCancelButton = (Button) view.findViewById(R.id.cancel_delete_crime);
-        mCancelButton.setOnClickListener(this);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 

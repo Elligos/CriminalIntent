@@ -14,8 +14,6 @@ public class Crime {
     private String mSuspect;
 
     public Crime(){
-//        mId = UUID.randomUUID();
-//        mDate = new Date();
         this(UUID.randomUUID());
     }
 

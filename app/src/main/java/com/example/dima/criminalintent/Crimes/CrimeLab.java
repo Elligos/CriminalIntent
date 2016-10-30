@@ -32,10 +32,6 @@ public class CrimeLab {
         return sCrimeLab;
     }
 
-//    private CrimeLab() {
-//        mCrimes = new ArrayList<>();
-//    }
-
     private CrimeLab(Context context) {
         mContext = context.getApplicationContext();
         mDatabase = new CrimeBaseHelper(mContext).getWritableDatabase();
@@ -75,13 +71,6 @@ public class CrimeLab {
     }
 
     public boolean deleteCrime(UUID id){
-//        for(Crime mCrime : mCrimes){
-//            if(mCrime.getId().equals(id)){
-//                mCrimes.remove(mCrime);
-//                return true;
-//            }
-//        }
-//        return false;
         mDatabase.delete(CrimeTable.Name,
                 CrimeTable.Cols.UUID + " = ?",
                 new String[]{id.toString()});
@@ -99,7 +88,7 @@ public class CrimeLab {
     public List<Crime> getCrimes(){
         List<Crime> crimes = new ArrayList<>();
 
-        CrimeCursorWrapper cursor = queryCrimes(null, null);
+        CrimeCursorWrapper cursor = queryCrimes(null, null);//получить все преступления из БД
 
         try{
             cursor.moveToFirst();
@@ -112,7 +101,6 @@ public class CrimeLab {
             cursor.close();
         }
         return crimes;
-//        return mCrimes;
     }
 
     private static ContentValues getContentValues(Crime crime){
@@ -129,16 +117,17 @@ public class CrimeLab {
     private CrimeCursorWrapper queryCrimes(String whereClause, String [] whereArgs)
     {
         Cursor cursor = mDatabase.query(
-                CrimeTable.Name,
-                null,
+                CrimeTable.Name,//table
+                null,//columns
                 whereClause,
                 whereArgs,
-                null,
-                null,
-                null);
+                null,//groupBy
+                null,//having
+                null);//orderBy
         return new CrimeCursorWrapper(cursor);
     }
 
+    //получить путь, по которому должен располагаться фотоснимок места преступления
     public File getPhotoFile(Crime crime){
         File externalFilesDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         if (externalFilesDir == null) {

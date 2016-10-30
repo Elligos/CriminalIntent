@@ -20,6 +20,8 @@ import com.example.dima.criminalintent.R;
  * Created by Dima on 10.10.2016.
  */
 
+
+//фрагмент для показа изображения в увеличенном виде
 public class CrimePictureFragment extends DialogFragment implements View.OnClickListener{
     private static final String ARG_PHOTO_PATH = "photo_path";
     ImageView mPhotoView;

@@ -21,6 +21,7 @@ import java.util.GregorianCalendar;
 /**
  * Created by Dima on 13.09.2016.
  */
+//диалог для выбора и возвращения даты
 public class DatePickerFragment extends DialogFragment implements DialogInterface.OnClickListener{
     private static final String ARG_DATE = "date";
     public static final String EXTRA_DATE = "com.example.dima.criminalintent.date";

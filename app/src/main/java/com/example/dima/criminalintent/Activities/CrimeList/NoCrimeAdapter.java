@@ -17,6 +17,8 @@ import java.util.List;
  * Created by Dima on 25.09.2016.
  */
 
+
+//адаптер для отображения поля создания нового преступления, если в списке еще нет ни одного
 public class NoCrimeAdapter extends RecyclerView.Adapter<NoCrimeHolder> {
 
     private List<Crime> mCrimes;

@@ -70,4 +70,10 @@ public class CrimePagerActivity extends AppCompatActivity/*FragmentActivity*/
     public void onCrimeUpdated(Crime crime) {
 
     }
+
+    @Override
+    public void onCrimeDeleted(Crime crime) {
+            CrimeLab.getCrimeLab(this).deleteCrime(crime.getId());
+            this.finish();
+    }
 }

@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,17 +40,21 @@ public class CrimeListFragment extends Fragment{
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
     private Callbacks mCallbacks;
 
+    //определение интерфейса, который обязана имплементировать активность-хост
     public interface Callbacks{
         void onCrimeSelected(Crime crime);
+        void onCrimeSolvedChanged(Crime crime);
     }
 
     @Override
+    //действия при подключении фрагмента к активности-хосту
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mCallbacks = (Callbacks) activity;
     }
 
     @Override
+    //действия при отсоединении фрагмента от активности-хоста
     public void onDetach() {
         super.onDetach();
         mCallbacks = null;
@@ -70,7 +75,9 @@ public class CrimeListFragment extends Fragment{
 
         View view = inflater.inflate(R.layout.fragment_crime_list,container, false);
         mCrimeRecyclerView = (RecyclerView) view.findViewById(R.id.crime_recycler_view);
-        mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));//назначить для
+            //+ для RecyclerView любой LayoutManager, который будет заниматься размещением элементов
+            //+ на экране
         if(savedInstanceState != null){
             mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE, false);
         }
@@ -84,7 +91,7 @@ public class CrimeListFragment extends Fragment{
         int crimesSize = crimes.size();
 
         updateSubtitle();
-        //if no crimes
+        //если в списке пока нет преступлений, добавить элемент для создания нового преступления
         if(crimesSize==0){
             if(mNoCrimeAdapter == null) {
                 mNoCrimeAdapter = new NoCrimeAdapter(crimeLab);
@@ -95,16 +102,19 @@ public class CrimeListFragment extends Fragment{
             }
             return;
         }
-        //if crimes was created
+        //если есть, отобразить список преступлений
         if(mAdapter == null) {
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
         }
         else{
-//            int position = CrimeListActivity.getSelectedItemPosition();
-//            if(position != -1) {
-//                mAdapter.notifyItemChanged(position);
-//            }
+            /*TODO: можно улучшить, сделать обновление ролей только измененных преступлений
+            int position = CrimeListActivity.getSelectedItemPosition();
+            if(position != -1) {
+                mAdapter.notifyItemChanged(position);
+            }
+            */
+            //обновить все поля
             mAdapter.setCrimes(crimes);
             mAdapter.notifyDataSetChanged();
         }
@@ -136,8 +146,6 @@ public class CrimeListFragment extends Fragment{
             case R.id.menu_item_new_crime:
                 Crime crime = new Crime();
                 CrimeLab.getCrimeLab(getActivity()).addCrime(crime);
-//                Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
-//                startActivity(intent);
                 updateUI();
                 mCallbacks.onCrimeSelected(crime);
                 return true;
@@ -152,10 +160,10 @@ public class CrimeListFragment extends Fragment{
 
     }
 
+    //обновить информацию в панели инструментов
     private void updateSubtitle(){
         CrimeLab crimeLab = CrimeLab.getCrimeLab(getActivity());
         int crimeCount = crimeLab.getCrimes().size();
-//        String subtitle = getString(R.string.subtitle_format, crimeCount);
         String subtitle = getResources().getQuantityString(R.plurals.subtitle_plural, crimeCount, crimeCount);
         if(mSubtitleVisible==false){
             subtitle = null;
@@ -164,7 +172,8 @@ public class CrimeListFragment extends Fragment{
         activity.getSupportActionBar().setSubtitle(subtitle);
     }
 
-
+    //сохранить позицию преступления
+    //TODO: переделать для сохранения изменений в нескольких преступлениях
     static public void storeLastSelectedItemPosition(int position){
         CrimeListActivity.storeSelectedItemPosition(position);
     }
@@ -187,8 +196,8 @@ class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder>{
 
     @Override
     public CrimeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext()/*getActivity()*/);
-        View view = layoutInflater.inflate(R.layout.list_item_crime/*android.R.layout.simple_list_item_1*/,
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        View view = layoutInflater.inflate(R.layout.list_item_crime,
                 parent,
                 false);
         return new CrimeHolder(view);
@@ -219,38 +228,43 @@ class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListene
 
     private Crime mCrime;
 
+    private java.text.DateFormat mMediumDateFormat;
+    private String mFormattedDate;
+
     private CrimeListFragment.Callbacks mCallbacks;
 
     public CrimeHolder(View itemView) {
         super(itemView);
         itemView.setOnClickListener(this);
+        mCallbacks = (CrimeListFragment.Callbacks) itemView.getContext();
         mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_crime_title_text_view);
         mDateTextView = (TextView) itemView.findViewById(R.id.list_item_crime_date_text_view);
         mSolvedCheckBox = (CheckBox) itemView.findViewById(R.id.list_item_crime_solved_ceck_box);
         mSolvedCheckBox.setOnCheckedChangeListener(this);
+        mMediumDateFormat = DateFormat.getMediumDateFormat(itemView.getContext());
     }
 
     public void bindCrime(Crime crime) {
         mCrime = crime;
         mTitleTextView.setText(mCrime.getTitle());
-        mDateTextView.setText(mCrime.getDate().toString());
         mSolvedCheckBox.setChecked(mCrime.isSolved());
+        mFormattedDate = mMediumDateFormat.format(mCrime.getDate());
+        mDateTextView.setText(mCrime.getDate().toString());
     }
 
     @Override
     public void onClick(View view) {
         storeItemPosition(view);
-//        Intent intent = CrimePagerActivity.newIntent(view.getContext(), mCrime.getId());
-//        view.getContext().startActivity(intent);
-        mCallbacks = (CrimeListFragment.Callbacks) view.getContext();
         mCallbacks.onCrimeSelected(mCrime);
     }
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         mCrime.setSolved(isChecked);
+        mCallbacks.onCrimeSolvedChanged(mCrime);
     }
 
+    //сохранить позицию выбранного поля
     private void storeItemPosition(View view){
         int position = getAdapterPosition();
         CrimeListFragment.storeLastSelectedItemPosition(position);

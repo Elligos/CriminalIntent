@@ -72,14 +72,17 @@ public class CrimeFragment extends Fragment
 
     public interface Callbacks{
         void onCrimeUpdated(Crime crime);
+        void onCrimeDeleted(Crime crime);
     }
 
+    //подключение фрагмента к активности
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mCallbacks = (CrimeFragment.Callbacks) activity;
     }
 
+    //отключение фрагмента от активности
     @Override
     public void onDetach() {
         super.onDetach();
@@ -94,15 +97,16 @@ public class CrimeFragment extends Fragment
         return crimeFragment;
     }
 
+    //для выбора подозреваемого из списка контактов
     final Intent pickContact = new Intent(Intent.ACTION_PICK,
                                           ContactsContract.Contacts.CONTENT_URI);
 
+    //для фотоснимка места преступления
     final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        UUID id = (UUID) getActivity().getIntent().getSerializableExtra(CrimeActivity.EXTRA_CRIME_ID);
         UUID id = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.getCrimeLab(getActivity()).getCrime(id);
         mPhotoFile = CrimeLab.getCrimeLab(getActivity()).getPhotoFile(mCrime);
@@ -117,14 +121,18 @@ public class CrimeFragment extends Fragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_crime, container, false );
 
+        //если нет подходящей активности для выбора подозреваемого из списка контактов, отключить
+        //+ кнопку выбора подозреваемого
         PackageManager packageManager = getActivity().getPackageManager();
         if (packageManager.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null) {
             mSuspectButton.setEnabled(false);
+            mCallSuspectButton.setEnabled(false);
         }
 
+        //если определен путь для хранения фотоснимка и имеется походящая активность, задать
+        //+ параметры интента
         boolean canTakePhoto =
                 (mPhotoFile != null) && (captureImage.resolveActivity(packageManager) != null);
         if (canTakePhoto) {
@@ -199,7 +207,6 @@ public class CrimeFragment extends Fragment
         switch(view.getId()){
             case R.id.crime_date:
                 FragmentManager fragmentManager = getFragmentManager();
-//          DatePickerFragment dialog = new DatePickerFragment();
                 DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
                 dialog.show(fragmentManager, DIALOG_DATE);
@@ -210,12 +217,7 @@ public class CrimeFragment extends Fragment
                 deleteCrimeDialog.show(getFragmentManager(), "Crime delete");
                 break;
             case R.id.crime_report_button:
-//                Intent i = new Intent(Intent.ACTION_SEND);
-//                i.setType("text/plain");
-//                i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
-//                i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_suspect));
-//                i.createChooser(i, getString(R.string.send_report));
-//                startActivity(i);
+                //отправить сообщение о преступлении через любое подходящее приложение
                 ShareCompat.IntentBuilder intentBuilder = ShareCompat.IntentBuilder.from(getActivity())
                         .setType("text/plain")
                         .setText(getCrimeReport())
@@ -227,7 +229,9 @@ public class CrimeFragment extends Fragment
                 startActivityForResult(pickContact, REQUEST_CONTACT);
                 break;
             case R.id.crime_call_suspect_button:
-                callSuspect();
+                if (mCrime.getSuspect() != null) {
+                    callSuspect();
+                }
                 break;
             case R.id.crime_camera:
                 startActivityForResult(captureImage, REQUEST_PHOTO);
@@ -236,6 +240,7 @@ public class CrimeFragment extends Fragment
                 if (mPhotoFile == null || !mPhotoFile.exists()) {
                     return;
                 }
+                //вывести изображение в увеличенном виде
                 CrimePictureFragment crimePictureDialog =
                                     CrimePictureFragment.getInstance(mPhotoFile.getPath());
                 crimePictureDialog.setTargetFragment(CrimeFragment.this, REQUEST_CRIME_PHOTO);
@@ -262,9 +267,10 @@ public class CrimeFragment extends Fragment
         if(requestCode==REQUEST_CRIME_DELETE){
             boolean deleteConfirmed = data.getBooleanExtra(EXTRA_DIALOG_RESULT, false);
             if(deleteConfirmed){
-                CrimeLab.getCrimeLab(getActivity()).deleteCrime(mCrime.getId());
-                updateCrime();
-                getActivity().finish();
+                mCallbacks.onCrimeDeleted(mCrime);
+//                CrimeLab.getCrimeLab(getActivity()).deleteCrime(mCrime.getId());
+//                updateCrime();
+//                getActivity().finish();
             }
         }
         if ((requestCode == REQUEST_CONTACT)&&(data!=null)) {
@@ -319,7 +325,6 @@ public class CrimeFragment extends Fragment
 
     private void callSuspect(){
         String phoneNumber = null;
-        String email = null;
         Uri CONTENT_URI = ContactsContract.Contacts.CONTENT_URI;
         String _ID = ContactsContract.Contacts._ID;
         String DISPLAY_NAME = ContactsContract.Contacts.DISPLAY_NAME;
@@ -327,12 +332,8 @@ public class CrimeFragment extends Fragment
         Uri PhoneCONTENT_URI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         String Phone_CONTACT_ID = ContactsContract.CommonDataKinds.Phone.CONTACT_ID;
         String NUMBER = ContactsContract.CommonDataKinds.Phone.NUMBER;
-        Uri EmailCONTENT_URI =  ContactsContract.CommonDataKinds.Email.CONTENT_URI;
-        String EmailCONTACT_ID = ContactsContract.CommonDataKinds.Email.CONTACT_ID;
-        String DATA = ContactsContract.CommonDataKinds.Email.DATA;
-        StringBuffer output = new StringBuffer();
 
-
+        //получить идентификатор контакта
         ContentResolver contentResolver = getActivity().getContentResolver();
         Cursor cursor = contentResolver.query(  CONTENT_URI,
                                                 null,
@@ -350,6 +351,8 @@ public class CrimeFragment extends Fragment
             cursor.close();
             return;
         }
+
+        //получить телефонный номер
         Cursor phoneCursor = contentResolver.query(PhoneCONTENT_URI,
                                                     null,
                                                     Phone_CONTACT_ID + " = ?",
@@ -366,9 +369,7 @@ public class CrimeFragment extends Fragment
         cursor.close();
         phoneCursor.close();
 
-//        Intent callContact = new Intent(Intent.ACTION_DIAL,
-//                                        ContactsContract.Contacts.CONTENT_URI);
-//        callContact.putExtra(Intent.EXTRA_PHONE_NUMBER, number);
+        //запустить телефонное приложение
         Intent callContact = new Intent(Intent.ACTION_DIAL,
                                         number);
         startActivity(callContact);
@@ -389,5 +390,13 @@ public class CrimeFragment extends Fragment
     private void updateCrime(){
         CrimeLab.getCrimeLab(getActivity()).updateCrime(mCrime);
         mCallbacks.onCrimeUpdated(mCrime);
+    }
+
+    public void setCrimeSolvedStateIn(boolean state){
+        mSolvedCheckBox.setChecked(state);
+    }
+
+    public UUID getCrimeId() {
+        return mCrime.getId();
     }
 }

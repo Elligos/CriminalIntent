@@ -12,6 +12,7 @@ import java.util.UUID;
  * Created by Dima on 29.09.2016.
  */
 
+//вспомогательный класс для работы с БД
 public class CrimeCursorWrapper extends CursorWrapper {
     public CrimeCursorWrapper(Cursor cursor) {
         super(cursor);
